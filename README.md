@@ -133,11 +133,3 @@ Tanmay Melanta
 ## ⭐ If you like this project
 
 Give it a ⭐ on GitHub and feel free to contribute!
-
----
-
-If you want next step, I can:
-
-* create **requirements.txt (optimized for Streamlit Cloud)**
-* suggest **repo structure for backend + infra (very useful for interviews)**
-* help you write **LinkedIn post for this project (high impact)**
