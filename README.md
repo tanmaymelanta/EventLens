@@ -1,7 +1,3 @@
-Here’s a clean, **production-ready README.md** you can directly paste into your repo 👇
-
----
-
 # 📸 EventLens – Find Yourself in Event Photos
 
 EventLens is a **Streamlit-based web application** that helps users instantly find themselves in event photos using **facial recognition**.
