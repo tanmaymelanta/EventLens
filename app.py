@@ -93,11 +93,9 @@ if st.session_state.get("search_clicked"):
                     if zip_url:
                         st.subheader("⬇️ Download All Photos")
 
-                        st.link_button(
-                            "📦 Download ZIP",
-                            zip_url
-                        )
-
+                        col1, col2, col3 = st.columns([1, 2, 1])
+                        with col2:
+                            st.link_button("📦 Download ZIP",zip_url, use_container_width=True)
                         st.caption("Link valid for 1 hour")
 
             else:
@@ -106,4 +104,3 @@ if st.session_state.get("search_clicked"):
 
         except Exception as e:
             st.error("API request failed")
-            st.write(str(e))
