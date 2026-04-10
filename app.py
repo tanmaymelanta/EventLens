@@ -3,10 +3,6 @@ import requests
 import base64
 from io import BytesIO
 from PIL import Image
-import zipfile
-from urllib.parse import urlparse
-import os
-from datetime import datetime
 
 st.set_page_config(layout="wide")
 
@@ -19,11 +15,13 @@ if "image_captured" not in st.session_state:
     st.session_state.image_captured = False
 if "img_str" not in st.session_state:
     st.session_state.img_str = None
+if "search_clicked" not in st.session_state:
+    st.session_state.search_clicked = False
 
 # Sidebar UI
 st.sidebar.header("User Profile")
 
-# 👉 STEP 1: Show camera ONLY if no image captured
+# 👉 STEP 1: Capture selfie
 if not st.session_state.image_captured:
     img_file_buffer = st.sidebar.camera_input("Take a selfie")
 
@@ -50,14 +48,15 @@ else:
 
     col1, col2 = st.sidebar.columns(2)
 
-    # 🔄 Retake button
+    # 🔄 Retake
     with col1:
         if st.button("🔄 Retake"):
             st.session_state.image_captured = False
             st.session_state.img_str = None
+            st.session_state.search_clicked = False
             st.rerun()
 
-    # 🔍 Search button
+    # 🔍 Search
     with col2:
         if st.button("🔍 Search"):
             st.session_state.search_clicked = True
@@ -72,41 +71,39 @@ if st.session_state.get("search_clicked"):
             )
 
             if response.status_code == 200:
-                results = response.json()
+                data = response.json()
 
-                if not results:
+                images = data.get("images", [])
+                zip_url = data.get("zip_url")
+
+                if not images:
                     st.warning("No matching photos found 😔")
                 else:
-                    st.success(f"Found {len(results)} matching photos 🎉")
+                    st.success(f"Found {len(images)} matching photos 🎉")
 
-                    # Grid layout
+                    # 👉 Grid layout
                     cols = st.columns(3)
-                    for i, img_url in enumerate(results):
+                    for i, img_url in enumerate(images):
                         with cols[i % 3]:
                             st.image(img_url, use_container_width=True)
 
-                    if st.button("⬇️ Download All Photos"):
-                        zip_buffer = BytesIO()
+                    st.divider()
 
-                        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-                            for idx, img_url in enumerate(results):
-                                try:
-                                    response = requests.get(img_url)
-                                    response.raise_for_status()
-                                    parsed_url = urlparse(img_url)
-                                    filename = os.path.basename(parsed_url.path)
-                                    if not filename:
-                                        filename = f"photo_{idx+1}.jpg"
-                                    zip_file.writestr(filename, response.content)
-                                except Exception as e:
-                                    pass
-                        zip_buffer.seek(0)
-                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        zip_filename = f"event_photos_{timestamp}.zip"
-                        st.download_button(label="📦 Click to Download ZIP", data=zip_buffer, file_name=zip_filename, mime="application/zip")
+                    # 👉 Download section
+                    if zip_url:
+                        st.subheader("⬇️ Download All Photos")
+
+                        st.link_button(
+                            "📦 Download ZIP",
+                            zip_url
+                        )
+
+                        st.caption("Link valid for 1 hour")
+
             else:
                 st.error(f"Error {response.status_code}")
                 st.write(response.text)
 
         except Exception as e:
             st.error("API request failed")
+            st.write(str(e))
