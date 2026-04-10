@@ -3,6 +3,10 @@ import requests
 import base64
 from io import BytesIO
 from PIL import Image
+import zipfile
+from urllib.parse import urlparse
+import os
+from datetime import datetime
 
 st.set_page_config(layout="wide")
 
@@ -81,10 +85,28 @@ if st.session_state.get("search_clicked"):
                         with cols[i % 3]:
                             st.image(img_url, use_container_width=True)
 
+                    if st.button("⬇️ Download All Photos"):
+                        zip_buffer = BytesIO()
+
+                        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+                            for idx, img_url in enumerate(results):
+                                try:
+                                    response = requests.get(img_url)
+                                    response.raise_for_status()
+                                    parsed_url = urlparse(img_url)
+                                    filename = os.path.basename(parsed_url.path)
+                                    if not filename:
+                                        filename = f"photo_{idx+1}.jpg"
+                                    zip_file.writestr(filename, response.content)
+                                except Exception as e:
+                                    pass
+                        zip_buffer.seek(0)
+                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                        zip_filename = f"event_photos_{timestamp}.zip"
+                        st.download_button(label="📦 Click to Download ZIP", data=zip_buffer, file_name=zip_filename, mime="application/zip")
             else:
                 st.error(f"Error {response.status_code}")
                 st.write(response.text)
 
         except Exception as e:
             st.error("API request failed")
-            st.write(str(e))
