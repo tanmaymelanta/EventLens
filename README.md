@@ -1,9 +1,8 @@
-# 📸 EventLens – Find Yourself in Event Photos
+📸 EventLens – Find Yourself in Event Photos
 
-EventLens is a **Streamlit-based web application** that helps users instantly find themselves in event photos using **facial recognition**.
+EventLens is a Streamlit-based web application that helps users instantly find themselves in event photos using facial recognition.
 
-Users simply take a selfie, and the app searches through a collection of event images to return matching results.
-
+With just a selfie, the app scans through event images and returns matching results in seconds.
 ---
 
 ## 🚀 Demo
