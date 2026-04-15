@@ -74,11 +74,11 @@ pip install -r requirements.txt
 Create `.streamlit/secrets.toml`:
 
 ```toml
-API_URL = "https://your-api-endpoint.amazonaws.com/search"
+API_URL = "your_api_endpoint_url"
 
 APP_USERNAME = "your_username"
 APP_PASSWORD = "your_password"
-APP_PROFILE = "Tanmay"
+APP_PROFILE = "your_display_name"
 ```
 
 ### 4️⃣ Run locally
